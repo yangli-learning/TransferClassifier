@@ -18,7 +18,7 @@ from torch.utils.data import Dataset,DataLoader,TensorDataset
 from torch.autograd import Variable
 
 
-PATH = "/home/viki/Codes/MultiSource/3/multi_source_exp/TransferClassifier/"
+PATH = "." #/home/viki/Codes/MultiSource/3/multi_source_exp/TransferClassifier/"
 import sys
 sys.path.append(PATH)
 from trainer.transfer import transfer_from_all

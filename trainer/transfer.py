@@ -16,9 +16,9 @@ import numpy as np
 import time
 from torch.utils.data import Dataset,DataLoader,TensorDataset
 from torch.autograd import Variable
+import wandb 
 
-
-PATH = "/home/viki/Codes/MultiSource/3/multi_source_exp/TransferClassifier/"
+PATH = "../"
 import sys
 sys.path.append(PATH)
 from trainer.train_s import train_all
@@ -33,6 +33,26 @@ SAVE_PATH = PATH + "result/"
 N_TASK = 5
 
 
+class SubLoader(datasets.CIFAR10):
+    def __init__(self, *args, exclude_list=[], **kwargs):
+        super(SubLoader, self).__init__(*args, **kwargs)
+
+        if exclude_list == []:
+            return
+
+        if self.train:
+            labels = np.array(self.targets)
+            mask = ~np.isin(labels, exclude_list)
+
+            self.data = self.data[mask]
+            self.targets = labels[mask].tolist()
+        else:
+            labels = np.array(self.targets)
+            mask = ~np.isin(labels, exclude_list)
+
+            self.data = self.data[mask]
+            self.targets = labels[mask].tolist()
+""" 
 def load_data_id(id, batch_size=100):
     '''
     task_id    range(10)
@@ -49,7 +69,7 @@ def load_data_id(id, batch_size=100):
     testloader = torch.utils.data.DataLoader(TensorDataset(x_test, y_test), batch_size=batch_size, shuffle=False, num_workers=2)
 
     return trainloader, testloader
-
+"""
 class transfer_from_all(train_all):
     def __init__(self, id, batch_size=100):
         super(transfer_from_all, self).__init__(path = PATH, all=False, batch_size=batch_size)
@@ -87,12 +107,13 @@ class transfer_from_all(train_all):
                 loss.backward()
 
                 optimizer_fg.step()
-                
+                wandb.log({"loss":loss.item()})
                 if print_loss and (i+1) % 100 == 0:
                     print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}' .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
 
         print('Finished Training')
-    
+        wandb.finish()
+
     def tuning(self):
         pass
 
@@ -106,23 +127,24 @@ class transfer_from_all(train_all):
 
         if train_f:
             print('*finetuning both f and g*')
-            save_path_f = self.path + dir + 'f_task_transfer'+str(self.id)+'.pth'
-            torch.save(self.model_f.state_dict(), save_path_f)
+            save_path_f =  dir + 'f_task_transfer'+str(self.id)+'.pth'
+            torch.save(self.model_f.state_dict(), save_path_f) #self.path +
 
-        save_path_g = self.path + dir + 'g_task_transfer'+str(self.id)+'.pth'
-        torch.save(self.model_g.state_dict(), save_path_g)
+        save_path_g =  dir + 'g_task_transfer'+str(self.id)+'.pth'
+        torch.save(self.model_g.state_dict(), save_path_g) #self.path +
 
 
 
 
 if __name__ == '__main__':
     batch_size = 10
-    num_epochs = 20
+    num_epochs = 5 #10
     lr = 0.0001
     num_class = 10
 
+
     for id in range(num_class):
-        train_id = transfer_from_all(id, batch_size=100)
+        train_id = transfer_from_all(id, batch_size=batch_size )
         #! need to self define tuning parameters
         train_id.tuning()
         train_id.save_model()
