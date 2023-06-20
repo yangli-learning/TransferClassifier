@@ -215,8 +215,7 @@ def get_args():
 
  
 if __name__ == '__main__':
-    args = get_args()
-    # id = sys.argv[1]
+    args = get_args() 
     batch_size = 512
     num_epochs = 16
     lr = 0.0001
@@ -245,7 +244,5 @@ if __name__ == '__main__':
         train_s.save_model()
     else:
         train_s.load_model() 
-    train_s.test_model(fit_train=True,save_features=False) #True
+    train_s.test_model(fit_train=True,save_features=True)
 
-    #! need to self define tuning parameters
-    train_s.tuning() 
