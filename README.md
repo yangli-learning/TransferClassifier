@@ -29,7 +29,7 @@ Train HGNet from scratch and test the model
 
 Test HGNet using saved parameters 
 ```
-    srun --gres=gpu:1 -w node05 python trainer/train_s.py --test_only false
+    srun --gres=gpu:1 -w node05 python trainer/train_s.py --test_only true
 ```
 
 ### analyze_svm.py
