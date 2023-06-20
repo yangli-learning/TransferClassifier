@@ -10,10 +10,9 @@ An experiment on multi-class classification vs. ensemble of class-specific class
 - output/ 
 - trainer/
     -    train_s.py    : train and test HGNet on Cifar10
-    -    analyze_svm.py   : analyze pretrained features with different classifiers
 - util/
     -    utils.py    : utility functions
-
+- analyze_svm.py   : analyze pretrained features with different classifiers
 
 ## Documentations
 
