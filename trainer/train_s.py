@@ -3,8 +3,7 @@ training of source model
 '''
 
 import torch.nn as nn
-import torch.nn.functional as F
-import torch
+import torch.nn.functional as F 
 import torch
 import torchvision
 import torch.nn as nn
@@ -79,14 +78,16 @@ class train_all():
 
     def __init__(self, path = PATH, all=True, batch_size=100):
 
-        self.num_class = 10 if all else 2
-        self.train_loader, self.test_loader , self.classes = self.load_data(batch_size)
+        self.num_class = 10  #if all else 1 (we do not change the dimension of y in )
+        #self.train_loader, self.test_loader , self.classes =
+        self.load_data(batch_size)
         self.model_f = Net_f().to(device)
-        self.model_g = Net_g(num_class = num_class).to(device)
+        self.model_g = Net_g(num_class = self.num_class).to(device)
         self.path = path
 
     def load_data(self,batch_size):
-        return load_data_all(batch_size=batch_size)
+        self.train_loader, self.test_loader , self.classes = load_data_all(batch_size =batch_size)
+
     
     def corr(self,f,g):
         k = torch.mean(torch.sum(f*g,1))
@@ -244,7 +245,7 @@ if __name__ == '__main__':
         train_s.save_model()
     else:
         train_s.load_model() 
-    train_s.test_model(fit_train=True,save_features=True)
+    train_s.test_model(fit_train=True,save_features=False) #True
 
     #! need to self define tuning parameters
     train_s.tuning() 
